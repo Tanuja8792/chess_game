@@ -1,1 +1,50 @@
-{% load static %}<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Play Chess</title><link rel="stylesheet" href="{% static 'css/style.css' %}"></head><body class="game-page"><header class="topbar"><a class="brand" href="/">♔ ROYAL 3D CHESS</a><a href="/">← Home</a></header><main class="game-layout"><section class="board-panel"><div class="board-heading"><div><p class="eyebrow">LIVE MATCH</p><h1>Chess Arena</h1></div><span class="live-dot">● READY</span></div><div id="chess-scene" aria-label="Interactive 3D chessboard"></div><div class="board-controls"><button id="reset-btn" class="secondary-btn">↻ New game</button><button id="flip-btn" class="secondary-btn">⇄ Flip board</button><button id="undo-btn" class="secondary-btn">↶ Undo</button></div></section><aside class="side-panel"><div class="player-card" id="black-card"><span class="avatar">♚</span><div><small>BLACK</small><b>Player 2</b></div><span class="turn-indicator"></span></div><div class="status-card"><small>GAME STATUS</small><h2 id="status">White to move</h2><p id="hint">Select a piece to see legal moves.</p></div><div class="player-card active-player" id="white-card"><span class="avatar white-avatar">♔</span><div><small>WHITE</small><b>Player 1</b></div><span class="turn-indicator"></span></div><div class="moves-card"><div class="moves-title"><b>Move history</b><small id="move-count">0 moves</small></div><ol id="move-list"><li class="empty-moves">Moves will appear here.</li></ol></div><p class="help-note">Drag to rotate · Scroll to zoom · Click a piece, then its destination.</p></aside></main><script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script><script type="module" src="{% static 'js/chess3d.js' %}"></script></body></html>
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101411">
+  <title>Chess Arena | Royal 3D Chess</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
+</head>
+<body class="game-page">
+  <header class="topbar game-topbar">
+    <a class="brand" href="/">♔ <span>ROYAL</span> 3D CHESS</a>
+    <a class="back-home" href="/">← BACK TO HOME</a>
+    <span class="nav-meta">LIVE LOCAL MATCH</span>
+  </header>
+  <main class="game-layout">
+    <section class="board-panel">
+      <div class="board-heading">
+        <div><p class="eyebrow"><span></span> THE BATTLEFIELD</p><h1>Chess Arena</h1><p class="board-subtitle">A game of patience, precision and power.</p></div>
+        <span class="live-pill"><i></i> LIVE MATCH</span>
+      </div>
+      <div id="chess-scene" aria-label="Interactive 3D chessboard">
+        <div class="scene-loading"><span class="loader"></span><b>Preparing the chess arena…</b><small>Loading 3D board and chess rules</small></div>
+      </div>
+      <div class="board-controls">
+        <button id="reset-btn" class="secondary-btn">↻ <span>New game</span></button>
+        <button id="flip-btn" class="secondary-btn">⇄ <span>Flip view</span></button>
+        <button id="undo-btn" class="secondary-btn">↶ <span>Undo move</span></button>
+      </div>
+      <p class="board-tip">DRAG TO ROTATE <i>·</i> SCROLL TO ZOOM <i>·</i> SELECT A PIECE, THEN ITS DESTINATION</p>
+    </section>
+    <aside class="side-panel">
+      <div class="panel-label">PLAYERS</div>
+      <div class="player-card" id="black-card"><span class="avatar">♚</span><div><small>BLACK PIECES</small><b>Player 2</b></div><span class="turn-indicator"></span></div>
+      <div class="status-card">
+        <div class="status-top"><span class="panel-label">MATCH STATUS</span><span class="status-live">● READY</span></div>
+        <h2 id="status">White to move</h2><p id="hint">Select one of your pieces to see its legal moves.</p>
+      </div>
+      <div class="player-card active-player" id="white-card"><span class="avatar white-avatar">♔</span><div><small>WHITE PIECES</small><b>Player 1</b></div><span class="turn-indicator"></span></div>
+      <div class="moves-card">
+        <div class="moves-title"><div><span class="panel-label">MATCH RECORD</span><b>Move history</b></div><small id="move-count">0 moves</small></div>
+        <ol id="move-list"><li class="empty-moves">Your moves will appear here.</li></ol>
+      </div>
+      <div class="side-foot">♟ <span>Good players think. Great players plan ahead.</span></div>
+    </aside>
+  </main>
+  <script type="module" src="{% static 'js/chess3d.js' %}?v=2"></script>
+</body>
+</html>
