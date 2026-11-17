@@ -7,6 +7,10 @@ import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.0.0/+esm";
 
   try {
     const game = new Chess();
+    const params = new URLSearchParams(window.location.search);
+    let playMode = params.get("mode") === "computer" ? "computer" : "local";
+    let aiThinking = false;
+    const computerDepth = 2;
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x111813);
 
@@ -171,8 +175,11 @@ import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.0.0/+esm";
       document.getElementById("status").textContent = message;
       document.getElementById("hint").textContent = over
         ? "The match is complete. Start a new game to play again."
-        : "Select a " + (game.turn() === "w" ? "white" : "black") + " piece to reveal its legal moves.";
+        : (playMode === "computer" && game.turn() === "b" ? "Computer is choosing its move…" : "Select a " + (game.turn() === "w" ? "white" : "black") + " piece to reveal its legal moves.");
 
+      document.getElementById("black-card").querySelector("b").textContent = playMode === "computer" ? "Computer" : "Player 2";
+      document.getElementById("white-card").querySelector("b").textContent = playMode === "computer" ? "You" : "Player 1";
+      document.getElementById("mode-label").textContent = playMode === "computer" ? "PLAYER VS COMPUTER" : "PLAYER VS PLAYER";
       document.getElementById("white-card").classList.toggle("active-player", game.turn() === "w" && !over);
       document.getElementById("black-card").classList.toggle("active-player", game.turn() === "b" && !over);
 
@@ -198,7 +205,7 @@ import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.0.0/+esm";
     }
 
     function selectSquare(square) {
-      if (game.isGameOver()) return;
+      if (game.isGameOver() || aiThinking || (playMode === "computer" && game.turn() === "b")) return;
       const piece = game.get(square);
 
       if (selected && targets.includes(square)) {
@@ -218,6 +225,7 @@ import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.0.0/+esm";
         targets = [];
         drawPieces();
         updateInterface();
+        makeComputerMove();
         return;
       }
 
@@ -229,6 +237,63 @@ import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.0.0/+esm";
         targets = [];
       }
       paintSquares();
+    }
+
+
+    const pieceValues = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+    function evaluatePosition() {
+      if (game.isCheckmate()) return game.turn() === "w" ? -100000 : 100000;
+      if (game.isDraw()) return 0;
+      let score = 0;
+      game.board().forEach(row => row.forEach(piece => {
+        if (piece) score += (piece.color === "w" ? 1 : -1) * pieceValues[piece.type];
+      }));
+      return score;
+    }
+    function searchBestMove(depth, alpha, beta, maximizing) {
+      if (depth === 0 || game.isGameOver()) return evaluatePosition();
+      const moves = game.moves({ verbose: true });
+      if (maximizing) {
+        let best = -Infinity;
+        for (const move of moves) {
+          game.move(move);
+          best = Math.max(best, searchBestMove(depth - 1, alpha, beta, false));
+          game.undo();
+          alpha = Math.max(alpha, best);
+          if (beta <= alpha) break;
+        }
+        return best;
+      }
+      let best = Infinity;
+      for (const move of moves) {
+        game.move(move);
+        best = Math.min(best, searchBestMove(depth - 1, alpha, beta, true));
+        game.undo();
+        beta = Math.min(beta, best);
+        if (beta <= alpha) break;
+      }
+      return best;
+    }
+    function makeComputerMove() {
+      if (playMode !== "computer" || game.turn() !== "b" || game.isGameOver() || aiThinking) return;
+      aiThinking = true;
+      updateInterface();
+      window.setTimeout(() => {
+        let bestMove = null;
+        let bestScore = Infinity;
+        for (const move of game.moves({ verbose: true })) {
+          game.move(move);
+          const score = searchBestMove(computerDepth - 1, -Infinity, Infinity, true);
+          game.undo();
+          if (score < bestScore) { bestScore = score; bestMove = move; }
+        }
+        if (bestMove) game.move({ from: bestMove.from, to: bestMove.to, promotion: bestMove.promotion || "q" });
+        aiThinking = false;
+        selected = null;
+        targets = [];
+        drawPieces();
+        updateInterface();
+      }, 450);
     }
 
     renderer.domElement.addEventListener("click", event => {
@@ -275,13 +340,18 @@ import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.0.0/+esm";
 
     document.getElementById("reset-btn").addEventListener("click", () => {
       game.reset();
+      aiThinking = false;
       selected = null;
       targets = [];
       drawPieces();
       updateInterface();
     });
     document.getElementById("undo-btn").addEventListener("click", () => {
-      if (game.history().length) game.undo();
+      if (game.history().length) {
+        game.undo();
+        if (playMode === "computer" && game.turn() === "b" && game.history().length) game.undo();
+      }
+      aiThinking = false;
       selected = null;
       targets = [];
       drawPieces();
@@ -304,6 +374,10 @@ import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.0.0/+esm";
     if ("ResizeObserver" in window) new ResizeObserver(resize).observe(mount);
     else window.addEventListener("resize", resize);
 
+    document.getElementById("mode-select").value = playMode;
+    document.getElementById("mode-select").addEventListener("change", event => {
+      window.location.href = window.location.pathname + "?mode=" + event.target.value;
+    });
     resize();
     drawPieces();
     updateInterface();
