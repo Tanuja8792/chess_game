@@ -20,8 +20,9 @@
       <h1>Strategy meets<br><em>the third dimension.</em></h1>
       <p class="lead">Enter a beautifully crafted 3D chess arena. Challenge a friend on the same screen, master every move, and make your next move count.</p>
       <div class="hero-actions">
-        <a class="primary-btn" href="{% url 'play' %}">Start a new game <span>→</span></a>
-        <span class="action-note">FREE PLAY · TWO PLAYERS</span>
+        <a class="primary-btn" href="{% url 'play' %}?mode=computer">Play vs Computer <span>→</span></a>
+        <a class="secondary-btn home-secondary" href="{% url 'play' %}?mode=local">Play vs Friend</a>
+        <span class="action-note">CHOOSE YOUR OPPONENT</span>
       </div>
       <div class="feature-row">
         <div><b>01</b><span>Immersive 3D board</span></div>
