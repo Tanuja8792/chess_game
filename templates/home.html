@@ -1,1 +1,53 @@
-{% load static %}<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Royal 3D Chess</title><link rel="stylesheet" href="{% static 'css/style.css' %}"></head><body class="landing"><nav class="topbar"><a class="brand" href="/">♔ ROYAL 3D CHESS</a><span>PYTHON · DJANGO · THREE.JS</span></nav><main class="hero"><section><p class="eyebrow">THINK · PLAN · CHECKMATE</p><h1>Every move<br><em>has a dimension.</em></h1><p class="lead">Step into a beautiful 3D chess arena. Play locally with a friend and sharpen your strategy.</p><a class="primary-btn" href="{% url 'play' %}">Start a new game →</a><div class="feature-row"><div><b>3D</b><small>Interactive board</small></div><div><b>2 Players</b><small>Local multiplayer</small></div><div><b>♟</b><small>Chess rules</small></div></div></section><section class="hero-art"><div class="art-glow"></div><div class="chess-symbol">♚</div><p>THE ROYAL GAME</p></section></main><footer>Built with Python · Django · Three.js</footer></body></html>
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101411">
+  <title>Royal 3D Chess | Enter the Arena</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
+</head>
+<body class="landing">
+  <nav class="topbar">
+    <a class="brand" href="/">♔ <span>ROYAL</span> 3D CHESS</a>
+    <div class="nav-meta"><span class="nav-dot"></span> PYTHON <i>·</i> DJANGO <i>·</i> THREE.JS</div>
+    <a class="nav-play" href="{% url 'play' %}">PLAY NOW <span>↗</span></a>
+  </nav>
+  <main class="hero">
+    <section class="hero-copy">
+      <p class="eyebrow"><span></span> THINK · PLAN · CHECKMATE</p>
+      <h1>Strategy meets<br><em>the third dimension.</em></h1>
+      <p class="lead">Enter a beautifully crafted 3D chess arena. Challenge a friend on the same screen, master every move, and make your next move count.</p>
+      <div class="hero-actions">
+        <a class="primary-btn" href="{% url 'play' %}">Start a new game <span>→</span></a>
+        <span class="action-note">FREE PLAY · TWO PLAYERS</span>
+      </div>
+      <div class="feature-row">
+        <div><b>01</b><span>Immersive 3D board</span></div>
+        <div><b>02</b><span>Local two-player</span></div>
+        <div><b>03</b><span>Legal chess moves</span></div>
+      </div>
+    </section>
+    <section class="hero-art" aria-label="Royal chess king illustration">
+      <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+      <div class="art-board">
+        {% for row in "12345678" %}
+          <div class="art-row">
+            {% for col in "12345678" %}
+              <span class="{% cycle 'tile-light' 'tile-dark' %}"></span>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="king-piece">♚</div>
+      <div class="art-caption"><span>THE ROYAL GAME</span><b>EST. YOUR NEXT MOVE</b></div>
+      <div class="gold-spark spark-one">✦</div><div class="gold-spark spark-two">✧</div>
+    </section>
+  </main>
+  <section class="bottom-strip">
+    <span>ONE BOARD. TWO MINDS. ENDLESS POSSIBILITIES.</span>
+    <span>BUILT FOR THE LOVE OF CHESS <b>♟</b></span>
+  </section>
+</body>
+</html>
